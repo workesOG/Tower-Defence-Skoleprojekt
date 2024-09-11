@@ -68,6 +68,8 @@
     <Compile Include="Assets\Scripts\TowerPlacer.cs" />
     <Compile Include="Assets\Scripts\Tower.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
+    <Compile Include="Assets\Scripts\Collections.cs" />
+    <Compile Include="Assets\Scripts\Enums.cs" />
     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
     <Compile Include="Assets\Scripts\Goal.cs" />
   </ItemGroup>

@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
 	void Start()
     {
         mainCamera = Camera.main;
-        goal = GameObject.Find("Goal").transform;           // goal-variablen gives en værdi. Scriptet finder selv "Goal" i Unity-scenen når denne linje køres.
+        goal = GameObject.Find("Goal").transform;           // goal-variablen gives en vï¿½rdi. Scriptet finder selv "Goal" i Unity-scenen nï¿½r denne linje kï¿½res.
         agent.SetDestination(goal.position);
     }
 
@@ -28,7 +28,7 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);                            // Fjern fjenden fra spillet
         }
 
-        hpBar.fillAmount = (float)currentHP / maxHP;        // Sætter hp-barens værdi.
+        hpBar.fillAmount = (float)currentHP / maxHP;        // Sï¿½tter hp-barens vï¿½rdi.
 
 		hpBar.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);           // HP baren peger i retning af kameraet
 		hpBarBackground.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up); // HP barens baggrundsbillede peger i retning af kameraet
@@ -38,7 +38,7 @@ public class Enemy : MonoBehaviour
 	{
         if (collision.collider.name == "Projectile(Clone)")             // Hedder det fjenden rammer "Projectile(Clone)"?
         {
-            currentHP = currentHP - 1;                                  // Der trækkes 1 fra currentHP;
+            currentHP = currentHP - 1;                                  // Der trï¿½kkes 1 fra currentHP;
             Destroy(collision.collider.gameObject);                     // Fjern projektilet fra spillet
         }
 	}

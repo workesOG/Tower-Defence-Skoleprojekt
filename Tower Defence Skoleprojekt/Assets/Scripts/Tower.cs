@@ -1,81 +1,127 @@
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
-	public List<GameObject> enemiesInRange = new List<GameObject>();            // En liste der skal indeholde fjender som tårnet kan skyde på
-	public GameObject projectile;                                               // Tårnets projektil
-	public float cooldown;                                                      // The time between each shot is fired
-	float remainingCooldown;                                                    // Tiden før næste skud
-	public Transform shootOrigin;                                               // Stedet projektilerne skal spawne
-	public float projectileSpeed = 10f;                                         // Projektil hastighed
+	public List<GameObject> enemiesInRange = new List<GameObject>();
+	public GameObject projectile;
+	public string projectilePath;
+	public float cooldown;
+	public Transform shootOrigin;
+	public string shootOriginPath;
+	public float projectileSpeed = 10f;
+	protected float remainingCooldown;
 
-	void Start()
+	protected void Start()
 	{
-
+		shootOrigin = GetShootOrigin(shootOriginPath);
+		projectile = GetProjectile(projectilePath);
 	}
 
-	void Update()
+	protected void Update()
 	{
-		enemiesInRange.RemoveAll(enemy => enemy == null);                       // Ryd op i listen og fjern ødelagte fjender (null-referencer)
+		enemiesInRange.RemoveAll(enemy => enemy == null);
+		remainingCooldown = remainingCooldown - Time.deltaTime;
 
-		remainingCooldown = remainingCooldown - Time.deltaTime;                 // remaining cooldown får trukket lige så meget fra sig som den tid sidste frame varede
-
-		if (remainingCooldown <= 0)                                             // er tiden gået?
+		if (remainingCooldown <= 0)
 		{
-			if (enemiesInRange.Count > 0)                                       // er der fjender som tårnet må skyde på?
+			if (enemiesInRange.Count > 0)
 			{
-				Shoot();                                                        // skyd
+				Shoot();
 			}
 		}
 	}
 
-	private void OnTriggerEnter(Collider other)						// Når noget rør tower's trigger
+	protected void OnTriggerEnter(Collider other)
 	{
-		if (other.gameObject.name == "Enemy(Clone)")                // Hedder objektet der rør "Enemy(Clone)"?
+		if (other.gameObject.name == "Enemy(Clone)")
 		{
-			enemiesInRange.Add(other.gameObject);                   // Tilføj til listen enemiesInRange
+			enemiesInRange.Add(other.gameObject);
 		}
 	}
 
-	private void OnTriggerExit(Collider other)							// Når noget forsvinder fra tower's trigger
+	protected void OnTriggerExit(Collider other)
 	{
-		if (other.gameObject.name == "Enemy(Clone)")					// Hedder objektet der rør "Enemy(Clone)"?
+		if (other.gameObject.name == "Enemy(Clone)")
 		{
-			enemiesInRange.Remove(other.gameObject);					// Fjern fra listen enemiesInRange
+			enemiesInRange.Remove(other.gameObject);
 		}
 	}
 
-	void Shoot()
+	protected virtual void Shoot()
 	{
-		
-		if (enemiesInRange.Count > 0)																		// Sørg for at der er en fjende at skyde på
+		if (enemiesInRange.Count > 0)
 		{
-			GameObject targetEnemy = enemiesInRange[0];														// Find den første fjende i listen
-			Vector3 direction = (targetEnemy.transform.position - shootOrigin.position).normalized;			// Beregn retningen mod fjenden
+			GameObject targetEnemy = enemiesInRange[0];
+			Vector3 direction = (targetEnemy.transform.position - shootOrigin.position).normalized;
 
-			GameObject newProjectile = Instantiate(projectile, shootOrigin.position, Quaternion.identity);  // Lav en ny projektil
-			Rigidbody rb = newProjectile.GetComponent<Rigidbody>();											// Få fat i projektilens Rigidbody
+			GameObject newProjectile = Instantiate(projectile, shootOrigin.position, Quaternion.identity);
+			Rigidbody rb = newProjectile.GetComponent<Rigidbody>();
 
 			if (rb != null)
 			{
-				rb.velocity = direction * projectileSpeed;													// Skyd projektilen mod fjenden med den valgte hastighed
+				rb.velocity = direction * projectileSpeed;
 			}
 
-			remainingCooldown = cooldown;                                                                   // Genstart cooldown
+			remainingCooldown = cooldown;
 
-			StartCoroutine(DestroyProjectileAfterHalfASecond(newProjectile));								// Kald coroutine som ødelægger projektilet efter 500ms.
+			StartCoroutine(DestroyProjectileAfterHalfASecond(newProjectile));
 		}
 	}
 
-	IEnumerator DestroyProjectileAfterHalfASecond(GameObject projectileToDie)
+	private Transform GetShootOrigin(string path)
 	{
-		yield return new WaitForSeconds(0.5f);					// Wait 500 ms.
+		GameObject parent = gameObject;
+		return parent.transform.Find(path).transform;
+	}
 
-		if (projectileToDie != null)							// Eksisterer projektilet stadigvæk?
+	private GameObject GetProjectile(string path)
+	{
+		return Resources.Load<GameObject>($"Prefabs/Projectiles/{path}");
+	}
+
+	protected IEnumerator DestroyProjectileAfterHalfASecond(GameObject projectileToDie)
+	{
+		yield return new WaitForSeconds(0.5f);
+
+		if (projectileToDie != null)
 		{
-			Destroy(projectileToDie);							// Ødelæg projektilet
+			Destroy(projectileToDie);
 		}
+	}
+}
+
+public class TowerBasic : Tower
+{
+	public new string projectilePath = "";
+	public new string shootOriginPath = "";
+	public new float cooldown = 0.2f;
+	public new float projectileSpeed = 10f;
+
+	new void Start()
+	{
+		base.Start();
+	}
+
+	new void Update()
+	{
+		base.Update();
+	}
+
+	new void OnTriggerEnter(Collider other)
+	{
+		base.OnTriggerEnter(other);
+	}
+
+	new void OnTriggerExit(Collider other)
+	{
+		base.OnTriggerExit(other);
+	}
+
+	protected override void Shoot()
+	{
+		base.Shoot();
 	}
 }
