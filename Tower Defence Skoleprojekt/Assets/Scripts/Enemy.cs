@@ -1,0 +1,45 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
+
+public class Enemy : MonoBehaviour
+{
+    public NavMeshAgent agent;
+    Transform goal;
+    public int maxHP;
+    public int currentHP;
+    public Image hpBar;
+    public Image hpBarBackground;
+	private Camera mainCamera;
+
+	void Start()
+    {
+        mainCamera = Camera.main;
+        goal = GameObject.Find("Goal").transform;           // goal-variablen gives en værdi. Scriptet finder selv "Goal" i Unity-scenen når denne linje køres.
+        agent.SetDestination(goal.position);
+    }
+
+	private void Update()
+	{
+        if (currentHP <= 0)                                 // Har fjenden 0 eller under 0 hp?
+        {
+            Destroy(gameObject);                            // Fjern fjenden fra spillet
+        }
+
+        hpBar.fillAmount = (float)currentHP / maxHP;        // Sætter hp-barens værdi.
+
+		hpBar.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);           // HP baren peger i retning af kameraet
+		hpBarBackground.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up); // HP barens baggrundsbillede peger i retning af kameraet
+	}
+
+	private void OnCollisionEnter(Collision collision)                  // Fjenden rammer noget
+	{
+        if (collision.collider.name == "Projectile(Clone)")             // Hedder det fjenden rammer "Projectile(Clone)"?
+        {
+            currentHP = currentHP - 1;                                  // Der trækkes 1 fra currentHP;
+            Destroy(collision.collider.gameObject);                     // Fjern projektilet fra spillet
+        }
+	}
+}
