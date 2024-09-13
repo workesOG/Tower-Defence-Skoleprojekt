@@ -5,22 +5,23 @@ using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
+	public string projectilePath;
+	public string shootOriginPath;
+	public float projectileSpeed;
+	public float cooldown;
+
 	public List<GameObject> enemiesInRange = new List<GameObject>();
 	public GameObject projectile;
-	public string projectilePath;
-	public float cooldown;
 	public Transform shootOrigin;
-	public string shootOriginPath;
-	public float projectileSpeed = 10f;
 	protected float remainingCooldown;
 
-	protected void Start()
+	protected virtual void Start()
 	{
 		shootOrigin = GetShootOrigin(shootOriginPath);
 		projectile = GetProjectile(projectilePath);
 	}
 
-	protected void Update()
+	protected virtual void Update()
 	{
 		enemiesInRange.RemoveAll(enemy => enemy == null);
 		remainingCooldown = remainingCooldown - Time.deltaTime;
@@ -34,7 +35,7 @@ public class Tower : MonoBehaviour
 		}
 	}
 
-	protected void OnTriggerEnter(Collider other)
+	protected virtual void OnTriggerEnter(Collider other)
 	{
 		if (other.gameObject.name == "Enemy(Clone)")
 		{
@@ -42,7 +43,7 @@ public class Tower : MonoBehaviour
 		}
 	}
 
-	protected void OnTriggerExit(Collider other)
+	protected virtual void OnTriggerExit(Collider other)
 	{
 		if (other.gameObject.name == "Enemy(Clone)")
 		{
@@ -95,27 +96,33 @@ public class Tower : MonoBehaviour
 
 public class TowerBasic : Tower
 {
-	public new string projectilePath = "";
-	public new string shootOriginPath = "";
-	public new float cooldown = 0.2f;
-	public new float projectileSpeed = 10f;
-
-	new void Start()
+	// Removed `new` keyword; we will override the values in Start method
+	protected override void Start()
 	{
+		// Set the desired values for the fields
+		projectilePath = "Basic Projectile";
+		shootOriginPath = "Head";
+		cooldown = 0.2f;
+		projectileSpeed = 25f;
+
+		// Call the base Start to ensure other initializations are done
 		base.Start();
 	}
 
-	new void Update()
+	// No need to override Update if no changes are needed
+	protected override void Update()
 	{
 		base.Update();
 	}
 
-	new void OnTriggerEnter(Collider other)
+	// No need to override OnTriggerEnter if no changes are needed
+	protected override void OnTriggerEnter(Collider other)
 	{
 		base.OnTriggerEnter(other);
 	}
 
-	new void OnTriggerExit(Collider other)
+	// No need to override OnTriggerExit if no changes are needed
+	protected override void OnTriggerExit(Collider other)
 	{
 		base.OnTriggerExit(other);
 	}
@@ -125,3 +132,4 @@ public class TowerBasic : Tower
 		base.Shoot();
 	}
 }
+

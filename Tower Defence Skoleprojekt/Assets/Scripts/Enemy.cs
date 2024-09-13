@@ -12,17 +12,17 @@ public class Enemy : MonoBehaviour
     public int currentHP;
     public Image hpBar;
     public Image hpBarBackground;
-	private Camera mainCamera;
+    private Camera mainCamera;
 
-	void Start()
+    void Start()
     {
         mainCamera = Camera.main;
         goal = GameObject.Find("Goal").transform;           // goal-variablen gives en v�rdi. Scriptet finder selv "Goal" i Unity-scenen n�r denne linje k�res.
         agent.SetDestination(goal.position);
     }
 
-	private void Update()
-	{
+    private void Update()
+    {
         if (currentHP <= 0)                                 // Har fjenden 0 eller under 0 hp?
         {
             Destroy(gameObject);                            // Fjern fjenden fra spillet
@@ -30,16 +30,16 @@ public class Enemy : MonoBehaviour
 
         hpBar.fillAmount = (float)currentHP / maxHP;        // S�tter hp-barens v�rdi.
 
-		hpBar.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);           // HP baren peger i retning af kameraet
-		hpBarBackground.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up); // HP barens baggrundsbillede peger i retning af kameraet
-	}
+        hpBar.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);           // HP baren peger i retning af kameraet
+        hpBarBackground.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up); // HP barens baggrundsbillede peger i retning af kameraet
+    }
 
-	private void OnCollisionEnter(Collision collision)                  // Fjenden rammer noget
-	{
-        if (collision.collider.name == "Projectile(Clone)")             // Hedder det fjenden rammer "Projectile(Clone)"?
+    private void OnCollisionEnter(Collision collision)                  // Fjenden rammer noget
+    {
+        if (collision.collider.tag == "Projectile")             // Hedder det fjenden rammer "Projectile(Clone)"?
         {
             currentHP = currentHP - 1;                                  // Der tr�kkes 1 fra currentHP;
             Destroy(collision.collider.gameObject);                     // Fjern projektilet fra spillet
         }
-	}
+    }
 }

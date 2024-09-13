@@ -52,6 +52,11 @@ public static class Collections
             { TowerType.Basic, typeof(TowerBasic)}
         };
 
+        public static Dictionary<TowerType, string> towerPaths = new Dictionary<TowerType, string>
+        {
+            { TowerType.Basic, "Basic Tower"}
+        };
+
         public static T GetTower<T>(TowerType type) where T : Tower
         {
             foreach (var kvp in towers)

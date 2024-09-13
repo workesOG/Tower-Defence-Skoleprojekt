@@ -360,6 +360,7 @@
 "Assets/Scripts/Goal.cs"
 "Assets/Scripts/Tower.cs"
 "Assets/Scripts/TowerPlacer.cs"
+"Assets/Scripts/UIHandler.cs"
 -langversion:9.0
 /deterministic
 /optimize+

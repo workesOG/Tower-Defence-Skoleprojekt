@@ -175,10 +175,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4319987848846475130}
-  - component: {fileID: 2286907332886291440}
   - component: {fileID: 8669582221377134880}
   m_Layer: 2
-  m_Name: Tower
+  m_Name: Basic Tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -201,23 +200,6 @@ Transform:
   - {fileID: 993820851673886116}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2286907332886291440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7681053031256805489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8def56c6ac326ca4dacdc39cc4d0b78d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemiesInRange: []
-  projectile: {fileID: 3383038432419895692, guid: 8d5cd9256fa65dc409471254ad28c39a, type: 3}
-  cooldown: 1
-  shootOrigin: {fileID: 993820851673886116}
-  projectileSpeed: 45
 --- !u!135 &8669582221377134880
 SphereCollider:
   m_ObjectHideFlags: 0
