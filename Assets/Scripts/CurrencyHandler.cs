@@ -5,29 +5,33 @@ using TMPro;
 
 public class CurrencyHandler : MonoBehaviour
 {
-    public static CurrencyHandler Instance { get; private set;}
+    public static CurrencyHandler Instance { get; private set; }
 
     [SerializeField]
-	private int startingCapital;
+    private int startingCapital;
+    public TextMeshProUGUI moneyScreenText;
+    System.Random random = new System.Random();
 
     private int money;
-    public int Money{
+    public int Money
+    {
         get => money;
-        set{
+        set
+        {
             money = value;
-            moneyScreenText.text = $"Money: {money}";
+            moneyScreenText.text = $"Money: {money}$";
         }
     }
-	System.Random random = new System.Random();
-    public TextMeshProUGUI moneyScreenText;
+
     void Awake()
     {
         Instance = this;
         Money = startingCapital;
     }
-  	public void GainMoney()
-	{
-		int randomMoney = random.Next(3,6);
-		Money += randomMoney;
-	}
+
+    public void GainMoney(int amount)
+    {
+        //int randomMoney = random.Next(3, 6);
+        Money += amount;
+    }
 }

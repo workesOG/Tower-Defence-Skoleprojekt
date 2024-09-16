@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
         if (currentHP <= 0)                                 // Har fjenden 0 eller under 0 hp?
         {
             Destroy(gameObject);                            // Fjern fjenden fra spillet
-            CurrencyHandler.Instance.GainMoney();
+            CurrencyHandler.Instance.GainMoney(1);
         }
 
         hpBar.fillAmount = (float)currentHP / maxHP;        // S�tter hp-barens v�rdi.

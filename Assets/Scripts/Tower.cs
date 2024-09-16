@@ -9,6 +9,7 @@ public class Tower : MonoBehaviour
 	public string shootOriginPath;
 	public float projectileSpeed;
 	public float cooldown;
+	public int price;
 
 	public List<GameObject> enemiesInRange = new List<GameObject>();
 	public GameObject projectile;
@@ -96,15 +97,19 @@ public class Tower : MonoBehaviour
 
 public class TowerBasic : Tower
 {
-	// Removed `new` keyword; we will override the values in Start method
-	protected override void Start()
+	public TowerBasic()
 	{
-		// Set the desired values for the fields
+		// Set specific values for TowerBasic
 		projectilePath = "Basic Projectile";
 		shootOriginPath = "Head";
 		cooldown = 0.2f;
 		projectileSpeed = 25f;
+		price = 10;
+	}
 
+	// Removed `new` keyword; we will override the values in Start method
+	protected override void Start()
+	{
 		// Call the base Start to ensure other initializations are done
 		base.Start();
 	}
@@ -133,3 +138,45 @@ public class TowerBasic : Tower
 	}
 }
 
+public class TowerSniper : Tower
+{
+	public TowerSniper()
+	{
+		// Set specific values for TowerBasic
+		projectilePath = "Basic Projectile";
+		shootOriginPath = "Head";
+		cooldown = 0.8f;
+		projectileSpeed = 50f;
+		price = 20;
+	}
+
+	// Removed `new` keyword; we will override the values in Start method
+	protected override void Start()
+	{
+		// Call the base Start to ensure other initializations are done
+		base.Start();
+	}
+
+	// No need to override Update if no changes are needed
+	protected override void Update()
+	{
+		base.Update();
+	}
+
+	// No need to override OnTriggerEnter if no changes are needed
+	protected override void OnTriggerEnter(Collider other)
+	{
+		base.OnTriggerEnter(other);
+	}
+
+	// No need to override OnTriggerExit if no changes are needed
+	protected override void OnTriggerExit(Collider other)
+	{
+		base.OnTriggerExit(other);
+	}
+
+	protected override void Shoot()
+	{
+		base.Shoot();
+	}
+}

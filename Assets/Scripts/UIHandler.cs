@@ -1,25 +1,30 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static Enums;
+using static Collections;
 
 public class UIHandler : MonoBehaviour
 {
     [SerializeField]
     public List<SerializableTowerPlacementButton> towerPlacementButtons;
-    // Start is called before the first frame update
+
     void Start()
     {
         SetupButtons();
     }
 
-    // Update is called once per frame
     void Update()
     {
-
+        foreach (var stpb in towerPlacementButtons)
+        {
+            Tower tower = Towers.GetTower(stpb.type);
+            bool buttonEnabled = CurrencyHandler.Instance.Money >= tower.price;
+            stpb.button.interactable = buttonEnabled;
+            stpb.button.transform.GetComponentInChildren<TMP_Text>().text = $"{stpb.type} ({tower.price})";
+        }
     }
 
     private void SetupButtons()
@@ -28,7 +33,10 @@ public class UIHandler : MonoBehaviour
         {
             TowerType type = stpb.type;
             stpb.button.onClick.AddListener(() => TowerPlacer.Instance.EnableTowerPlacement(type));
-            stpb.button.transform.GetComponentInChildren<TMP_Text>().text = type.ToString();
+            Tower tower = Towers.GetTower(type);
+            bool buttonEnabled = CurrencyHandler.Instance.Money >= tower.price;
+            stpb.button.interactable = buttonEnabled;
+            stpb.button.transform.GetComponentInChildren<TMP_Text>().text = $"{type} ({tower.price})";
         }
     }
 }

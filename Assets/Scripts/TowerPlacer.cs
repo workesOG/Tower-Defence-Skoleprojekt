@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Enums;
 using static Collections;
+using System.Linq;
 
 public class TowerPlacer : MonoBehaviour
 {
@@ -49,6 +50,7 @@ public class TowerPlacer : MonoBehaviour
 
 			// Add the newly placed tower to the list
 			placedTowers.Add(newTower);
+			CurrencyHandler.Instance.Money -= placedTowers.Last().GetComponent<Tower>().price;
 
 			// Disable further tower placement until the button is clicked again
 			canPlaceTower = false;

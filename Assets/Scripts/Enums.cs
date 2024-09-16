@@ -6,6 +6,7 @@ public static class Enums
 {
     public enum TowerType
     {
-        Basic
+        Basic,
+        Sniper,
     }
 }
