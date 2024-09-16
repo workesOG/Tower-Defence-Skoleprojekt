@@ -1,0 +1,19 @@
+{
+    "waves": [
+        {
+            "enemyCount": 5,
+            "cooldown": 1.5,
+            "delayBetweenWaves": 7.0
+        },
+        {
+            "enemyCount": 10,
+            "cooldown": 1.0,
+            "delayBetweenWaves": 15.0
+        },
+        {
+            "enemyCount": 15,
+            "cooldown": 0.75,
+            "delayBetweenWaves": 2.5
+        }
+    ]
+}
