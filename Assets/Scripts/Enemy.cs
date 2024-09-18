@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,11 @@ public class Enemy : MonoBehaviour
         mainCamera = Camera.main;
         goal = GameObject.Find("Goal").transform;           // goal-variablen gives en v�rdi. Scriptet finder selv "Goal" i Unity-scenen n�r denne linje k�res.
         agent.SetDestination(goal.position);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHP = Mathf.RoundToInt(Math.Max(currentHP - damage, 0));
     }
 
     private void Update()
