@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.17985842, g: 0.22519799, b: 0.30664572, a: 1}
+  m_IndirectSpecularColor: {r: 0.17985797, g: 0.2251972, b: 0.30664453, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4963,11 +4963,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 12335148}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2056ff2ca56a0c49afd73af9847527c, type: 3}
+  m_Script: {fileID: 11500000, guid: dd33fbaeca9d0c841bbeb7b679e059ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemy: {fileID: 8682864155850854689, guid: 130b31e843a492f4b943770544ba7d0c, type: 3}
-  cooldown: 1
+  jsonFilePath: Assets/WaveData.json
 --- !u!1 &42789746
 GameObject:
   m_ObjectHideFlags: 0
