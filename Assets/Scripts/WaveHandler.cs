@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO; // For reading files
+using System.IO; // For reading the JSON file
 
 public class WaveHandler : MonoBehaviour
 {
@@ -9,22 +9,32 @@ public class WaveHandler : MonoBehaviour
     public string jsonFilePath = "Assets/WaveData.json"; // Path to the JSON file
 
     private WaveData waveData;
+    private int currentWaveIndex = 0;
+
+    public static WaveHandler Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
         // Load the wave data from the JSON file
         LoadWaveData();
-        
-        // Start the coroutine to spawn enemies based on the wave data
-        StartCoroutine(SpawnWaves());
     }
 
     private void LoadWaveData()
     {
-        // Check if the file exists
         if (File.Exists(jsonFilePath))
         {
-            // Load the JSON file and deserialize it into WaveData
             string json = File.ReadAllText(jsonFilePath);
             waveData = JsonUtility.FromJson<WaveData>(json);
         }
@@ -34,27 +44,38 @@ public class WaveHandler : MonoBehaviour
         }
     }
 
-    public IEnumerator SpawnWaves()
+    public void StartNextWave(System.Action onWaveComplete)
     {
-        foreach (Wave wave in waveData.waves)
+        if (currentWaveIndex < waveData.waves.Count)
         {
-            // Spawn enemies for the current wave
-            for (int i = 0; i < wave.enemyCount; i++)
-            {
-                // Instantiate enemy at this object's position
-                Instantiate(enemy, this.transform.position, Quaternion.identity);
-                Debug.Log("Spawning enemy " + (i + 1) + " of " + wave.enemyCount);
+            StartCoroutine(SpawnWave(waveData.waves[currentWaveIndex], onWaveComplete));
+            currentWaveIndex++;
+        }
+        else
+        {
+            Debug.Log("All waves completed!");
+            onWaveComplete?.Invoke();
+        }
+    }
 
-                // Wait between each enemy spawn
-                yield return new WaitForSeconds(wave.cooldown);
-            }
+    private IEnumerator SpawnWave(Wave wave, System.Action onWaveComplete)
+    {
+        Debug.Log("Starting wave " + currentWaveIndex);
 
-            // Wait for the specified delay between this wave and the next wave
-            Debug.Log("Wave completed. Waiting for " + wave.delayBetweenWaves + " seconds before the next wave.");
-            yield return new WaitForSeconds(wave.delayBetweenWaves);
+        for (int i = 0; i < wave.enemyCount; i++)
+        {
+            Instantiate(enemy, this.transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(wave.cooldown);
         }
 
-        Debug.Log("All waves completed!");
+        Debug.Log("Wave completed.");
+        onWaveComplete?.Invoke();
+    }
+
+    // Method to check if there are more waves left to spawn
+    public bool HasWavesRemaining()
+    {
+        return currentWaveIndex < waveData.waves.Count;
     }
 }
 
@@ -62,8 +83,8 @@ public class WaveHandler : MonoBehaviour
 public class Wave
 {
     public int enemyCount;
-    public float delayBetweenWaves;
     public float cooldown;
+    public float delayBetweenWaves;
 }
 
 [System.Serializable]
