@@ -64,6 +64,7 @@ public class AutoWaveController : MonoBehaviour
         {
             StopCoroutine(autoWaveCoroutine);
             autoWaveCoroutine = null;
+            UIHandler.Instance.startWaveButton.interactable = true;
         }
     }
 

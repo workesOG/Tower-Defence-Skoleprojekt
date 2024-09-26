@@ -35,7 +35,6 @@ public class Enemy : MonoBehaviour
         if (agent.hasPath)
         {
             agent.velocity = agent.desiredVelocity; // Force the agent to move at full speed
-            Debug.Log(agent.velocity.ToString());
         }
 
         hpBar.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);           // HP baren peger i retning af kameraet

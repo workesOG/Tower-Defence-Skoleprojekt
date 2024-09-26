@@ -81,7 +81,6 @@ public class Wave
 {
     public int enemyCount;
     public float cooldown;
-    public float delayBetweenWaves;
 }
 
 [System.Serializable]

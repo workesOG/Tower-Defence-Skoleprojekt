@@ -2,18 +2,15 @@
     "waves": [
         {
             "enemyCount": 5,
-            "cooldown": 1.5,
-            "delayBetweenWaves": 0.1
+            "cooldown": 1.5
         },
         {
             "enemyCount": 10,
-            "cooldown": 1.0,
-            "delayBetweenWaves": 0.1
+            "cooldown": 1.0
         },
         {
             "enemyCount": 15,
-            "cooldown": 0.75,
-            "delayBetweenWaves": 0.1
+            "cooldown": 0.75
         }
     ]
 }
