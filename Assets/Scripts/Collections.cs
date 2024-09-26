@@ -6,46 +6,6 @@ using static Enums;
 
 public static class Collections
 {
-    // Nested static class for managing paddle-related assets
-    /*public static class Paddles
-    {
-        // Dictionary that maps PaddleType enums to their respective resource paths
-        private static readonly Dictionary<PaddleType, string> paddlePaths = new Dictionary<PaddleType, string>
-        {
-            { PaddleType.PlayerPaddle, "Prefabs/Paddles/Player Paddle" },
-            { PaddleType.StandardEnemyPaddle, "Prefabs/Paddles/Standard Enemy Paddle" },
-        };
-
-        // Properties to directly access paddles
-        public static GameObject PlayerPaddle => LoadPaddle(PaddleType.PlayerPaddle);
-        public static GameObject StandardEnemyPaddle => LoadPaddle(PaddleType.StandardEnemyPaddle);
-
-        // Method to load a paddle GameObject based on the specified PaddleType
-        public static GameObject LoadPaddle(PaddleType paddleType)
-        {
-            return LoadAsset(paddlePaths, paddleType, "PaddleType");
-        }
-    }
-
-    // Nested static class for managing ball-related assets
-    public static class Balls
-    {
-        // Dictionary that maps BallType enums to their respective resource paths
-        private static readonly Dictionary<BallType, string> ballPaths = new Dictionary<BallType, string>
-        {
-            { BallType.StandardBall, "Prefabs/Balls/Standard Ball" },
-        };
-
-        // Properties to directly access balls
-        public static GameObject StandardBall => LoadBall(BallType.StandardBall);
-
-        // Method to load a ball GameObject based on the specified BallType
-        public static GameObject LoadBall(BallType ballType)
-        {
-            return LoadAsset(ballPaths, ballType, "BallType");
-        }
-    }*/
-
     public static class Towers
     {
         public static Dictionary<TowerType, Type> towers = new Dictionary<TowerType, Type>
@@ -94,7 +54,7 @@ public static class Collections
                 }
             }
 
-            Debug.Log("Type not found");
+            Debug.Log("Tower type not found");
             return null;
         }
 
@@ -108,6 +68,65 @@ public static class Collections
                 return tower.price;
             }
             return 0f; // Return a default or error value if the tower or price isn't found
+        }
+    }
+
+    public static class Enemies
+    {
+        public static Dictionary<EnemyType, Type> enemies = new Dictionary<EnemyType, Type>
+        {
+            { EnemyType.Basic, typeof(EnemyBasic)},
+        };
+
+        public static Dictionary<EnemyType, string> enemyPaths = new Dictionary<EnemyType, string>
+        {
+            { EnemyType.Basic, "Basic Enemy"},
+        };
+
+        public static Enemy GetEnemy(EnemyType type)
+        {
+            if (enemies.TryGetValue(type, out Type enemyType))
+            {
+
+                // Ensure that the type is a Tower and assignable from MonoBehaviour
+                if (typeof(Enemy).IsAssignableFrom(enemyType))
+                {
+
+                    // Create a temporary GameObject
+                    GameObject tempGameObject = new GameObject("TempEnemy");
+
+                    try
+                    {
+                        // Add the tower component to the GameObject
+                        Enemy enemy = tempGameObject.AddComponent(enemyType) as Enemy;
+
+                        if (enemy != null)
+                        {
+                            // Cleanup the temporary GameObject after use
+                            GameObject.Destroy(tempGameObject);
+                            return enemy;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error creating enemy instance: {ex.Message}");
+                    }
+
+                    // Cleanup the temporary GameObject in case of failure
+                    GameObject.Destroy(tempGameObject);
+                }
+            }
+
+            Debug.Log("Enemy type not found");
+            return null;
+        }
+
+        public static GameObject Instantiate(EnemyType type, Vector3 position, Quaternion rotation)
+        {
+            GameObject original = Resources.Load<GameObject>($"Prefabs/Enemies/{enemyPaths[type]}");
+            GameObject gameObject = GameObject.Instantiate(original, position, rotation);
+            gameObject.AddComponent(enemies[type]);
+            return gameObject;
         }
     }
 }

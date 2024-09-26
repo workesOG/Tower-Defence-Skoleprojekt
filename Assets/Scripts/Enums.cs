@@ -9,4 +9,9 @@ public static class Enums
         Basic,
         Sniper,
     }
+
+    public enum EnemyType
+    {
+        Basic,
+    }
 }

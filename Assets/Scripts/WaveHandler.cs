@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO; // For reading the JSON file
+using static Collections;
+using static Enums;
 
 public class WaveHandler : MonoBehaviour
 {
@@ -18,17 +20,12 @@ public class WaveHandler : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            LoadWaveData();
         }
         else
         {
             Destroy(gameObject);
         }
-    }
-
-    private void Start()
-    {
-        // Load the wave data from the JSON file
-        LoadWaveData();
     }
 
     private void LoadWaveData()
@@ -50,7 +47,6 @@ public class WaveHandler : MonoBehaviour
         {
             StartCoroutine(SpawnWave(waveData.waves[currentWaveIndex], onWaveComplete));
             currentWaveIndex++;
-            Debug.Log($"Starting Wave: {currentWaveIndex}");
         }
         else
         {
@@ -61,11 +57,11 @@ public class WaveHandler : MonoBehaviour
 
     private IEnumerator SpawnWave(Wave wave, System.Action onWaveComplete)
     {
-        Debug.Log("Starting wave " + currentWaveIndex);
+        Debug.Log($"Starting wave {currentWaveIndex + 1}");
 
         for (int i = 0; i < wave.enemyCount; i++)
         {
-            Instantiate(enemy, this.transform.position, Quaternion.identity);
+            Enemies.Instantiate(EnemyType.Basic, this.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(wave.cooldown);
         }
 

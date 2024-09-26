@@ -8,22 +8,29 @@ using static Collections;
 
 public class UIHandler : MonoBehaviour
 {
-    [SerializeField]
     public List<SerializableTowerPlacementButton> towerPlacementButtons;
-
-    [SerializeField]
     public Button startWaveButton;  // The "Next Wave" button reference
+    public Toggle AutoModeToggle;  // Reference to the Toggle UI element
 
     private bool waveInProgress = false; // Track if a wave is currently running
+
+    public static UIHandler Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
         SetupButtons();
-
-        // Assign listeners to the button
-        startWaveButton.onClick.AddListener(OnStartWaveButtonClicked);
-
-        startWaveButton.interactable = true; // Ensure the button is enabled at the beginning
     }
 
     private void Update()
@@ -48,6 +55,9 @@ public class UIHandler : MonoBehaviour
             stpb.button.interactable = buttonEnabled;
             stpb.button.transform.GetComponentInChildren<TMP_Text>().text = $"{type} ({tower.price})";
         }
+        startWaveButton.onClick.AddListener(OnStartWaveButtonClicked);
+        startWaveButton.interactable = true; // Ensure the button is enabled at the beginning
+        AutoModeToggle.onValueChanged.AddListener(AutoWaveController.Instance.OnAutoModeToggleChanged);
     }
 
     // This function is called when the "Start Wave" button is pressed

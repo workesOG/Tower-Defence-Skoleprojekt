@@ -1,52 +1,89 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    public NavMeshAgent agent;
-    Transform goal;
-    public int maxHP;
-    public int currentHP;
-    public Image hpBar;
-    public Image hpBarBackground;
+    private NavMeshAgent agent;
+    private Transform goal;
+    private Image hpBar;
+    private Image hpBarBackground;
     private Camera mainCamera;
 
-    void Start()
+    public int maxHP;
+    public float speed;
+    public int moneyGivenOnDeath;
+
+    [DoNotSerialize]
+    public int currentHP;
+
+    protected virtual void Start()
     {
+        currentHP = maxHP;
         mainCamera = Camera.main;
-        goal = GameObject.Find("Goal").transform;           // goal-variablen gives en v�rdi. Scriptet finder selv "Goal" i Unity-scenen n�r denne linje k�res.
+        GetReferences();
+        agent.speed = speed;
         agent.SetDestination(goal.position);
     }
 
-    public void TakeDamage(int damage)
+    protected virtual void Update()
     {
-        currentHP = Mathf.RoundToInt(Math.Max(currentHP - damage, 0));
-    }
-
-    private void Update()
-    {
-        if (currentHP <= 0)                                 // Har fjenden 0 eller under 0 hp?
+        if (agent.hasPath)
         {
-            Destroy(gameObject);                            // Fjern fjenden fra spillet
-            CurrencyHandler.Instance.GainMoney(1);
+            agent.velocity = agent.desiredVelocity; // Force the agent to move at full speed
+            Debug.Log(agent.velocity.ToString());
         }
-
-        hpBar.fillAmount = (float)currentHP / maxHP;        // S�tter hp-barens v�rdi.
 
         hpBar.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);           // HP baren peger i retning af kameraet
         hpBarBackground.transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up); // HP barens baggrundsbillede peger i retning af kameraet
     }
 
-    private void OnCollisionEnter(Collision collision)                  // Fjenden rammer noget
+    public virtual void TakeDamage(int damage)
     {
-        if (collision.collider.tag == "Projectile")             // Hedder det fjenden rammer "Projectile(Clone)"?
+        currentHP = Mathf.RoundToInt(Math.Max(currentHP - damage, 0));
+
+        if (currentHP <= 0)
         {
-            currentHP = currentHP - 1;                                  // Der tr�kkes 1 fra currentHP;
-            Destroy(collision.collider.gameObject);                     // Fjern projektilet fra spillet
+            Destroy(gameObject);
+            CurrencyHandler.Instance.GainMoney(moneyGivenOnDeath);
         }
+        hpBar.fillAmount = (float)currentHP / maxHP;
+    }
+
+    private void GetReferences()
+    {
+        agent = gameObject.GetComponent<NavMeshAgent>();
+        hpBar = transform.Find("Canvas/HPBar").GetComponent<Image>();
+        hpBarBackground = transform.Find("Canvas/Image").GetComponent<Image>();
+        goal = GameObject.Find("Goal").transform;
+    }
+}
+
+public class EnemyBasic : Enemy
+{
+    public EnemyBasic()
+    {
+        maxHP = 10;
+        speed = 4f;
+        moneyGivenOnDeath = 1;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+    }
+
+    public override void TakeDamage(int damage)
+    {
+        base.TakeDamage(damage);
     }
 }
