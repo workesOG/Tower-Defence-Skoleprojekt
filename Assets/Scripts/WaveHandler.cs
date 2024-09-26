@@ -50,6 +50,7 @@ public class WaveHandler : MonoBehaviour
         {
             StartCoroutine(SpawnWave(waveData.waves[currentWaveIndex], onWaveComplete));
             currentWaveIndex++;
+            Debug.Log($"Starting Wave: {currentWaveIndex}");
         }
         else
         {
