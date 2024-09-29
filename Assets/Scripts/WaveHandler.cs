@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO; // For reading the JSON file
 using static Collections;
 using static Enums;
+using System;
 
 public class WaveHandler : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class WaveHandler : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            //WriteTestWaveConfig();
             LoadWaveData();
         }
         else
@@ -41,6 +43,45 @@ public class WaveHandler : MonoBehaviour
         }
     }
 
+    public void WriteTestWaveConfig()
+    {
+        string filePath = "Assets/TestWaveData.json";
+
+        WaveData waveData = new WaveData()
+        {
+            waves = new List<Wave>
+            {
+                new Wave()
+                {
+                    subWaves = new List<SubWave>
+                    {
+                        new SubWave()
+                        {
+                            type = "Basic", count = 5, interval = 0.5f, endInterval = 1.5f,
+                        }
+                    }
+                },
+                new Wave()
+                {
+                    subWaves = new List<SubWave>
+                    {
+                        new SubWave()
+                        {
+                            type = "Basic", count = 10, interval = 0.5f, endInterval = 1.5f,
+                        },
+                        new SubWave()
+                        {
+                            type = "Basic", count = 15, interval = 0.5f, endInterval = 1.5f,
+                        }
+                    }
+                },
+            }
+        };
+
+        string jsonContent = JsonUtility.ToJson(waveData, true);
+        File.WriteAllText(filePath, jsonContent);
+    }
+
     public void StartNextWave(System.Action onWaveComplete)
     {
         if (currentWaveIndex < waveData.waves.Count)
@@ -59,10 +100,15 @@ public class WaveHandler : MonoBehaviour
     {
         Debug.Log($"Starting wave {currentWaveIndex + 1}");
 
-        for (int i = 0; i < wave.enemyCount; i++)
+        foreach (SubWave subWave in wave.subWaves)
         {
-            Enemies.Instantiate(EnemyType.Basic, this.transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(wave.cooldown);
+            for (int i = 0; i < subWave.count; i++)
+            {
+                EnemyType enemyType = (EnemyType)Enum.Parse(typeof(EnemyType), subWave.type);
+                Enemies.Instantiate(enemyType, this.transform.position, Quaternion.identity);
+                float waitTime = i == subWave.count - 1 ? subWave.endInterval : subWave.interval;
+                yield return new WaitForSeconds(waitTime);
+            }
         }
 
         Debug.Log("Wave completed.");
@@ -77,14 +123,22 @@ public class WaveHandler : MonoBehaviour
 }
 
 [System.Serializable]
-public class Wave
-{
-    public int enemyCount;
-    public float cooldown;
-}
-
-[System.Serializable]
 public class WaveData
 {
     public List<Wave> waves;
+}
+
+[System.Serializable]
+public class Wave
+{
+    public List<SubWave> subWaves;
+}
+
+[System.Serializable]
+public class SubWave
+{
+    public string type;
+    public int count;
+    public float interval;
+    public float endInterval;
 }
