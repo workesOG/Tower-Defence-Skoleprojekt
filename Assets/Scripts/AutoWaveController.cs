@@ -1,103 +1,118 @@
+// Er lavet med hjælp fra chatGPT. Den hjælp vi har fået er hjælp til at lave toggle den smarteste måde så den kan arbejde sammen med WaveHandleren.
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
-
 public class AutoWaveController : MonoBehaviour
 {
-    public float autoModeInterval = 10f; // Interval to wait before starting the next wave in auto mode
+    // Flag to check if auto mode is enabled
     private bool autoModeEnabled = false;
-    private Coroutine autoWaveCoroutine;
 
-    private WaitForSeconds waitForAutoModeInterval;  // Store reference to avoid repeated allocations
+    // Reference to the currently running coroutine for auto wave spawning 
+    private Coroutine autoWaveCoroutine; 
 
+    // Caching the WaitForSeconds object to optimize performance
+    private WaitForSeconds waitForAutoModeInterval;
+
+    // Singleton instance for easy access to the AutoWaveController
     public static AutoWaveController Instance { get; private set; }
 
     private void Awake()
     {
+        // Implement singleton pattern to ensure only one instance of AutoWaveController exists
         if (Instance == null)
         {
-            Instance = this;
+            // Set this instance as the singleton
+            Instance = this; 
         }
         else
         {
-            Destroy(gameObject);
+            // Destroy duplicate instance
+            Destroy(gameObject); 
         }
     }
 
-    private void Start()
-    {
-        // Store the WaitForSeconds object to avoid memory allocations each time
-        waitForAutoModeInterval = new WaitForSeconds(autoModeInterval);
-    }
-
-    // Triggered when the auto-mode toggle is changed
+    
+    // Method to be called when the auto-mode toggle is changed
     public void OnAutoModeToggleChanged(bool isOn)
     {
+         // Update the auto mode state based on the toggle
         autoModeEnabled = isOn;
 
         if (autoModeEnabled)
         {
-            StartAutoMode();
+            // Start automatic wave spawning if enabled
+            StartAutoMode(); 
         }
         else
         {
-            StopAutoMode();
+            // Stop automatic wave spawning if disabled
+            StopAutoMode(); 
         }
     }
 
-    // Start automatic wave spawning
+    // Starts the automatic wave spawning process
     private void StartAutoMode()
     {
-        // Start the auto wave coroutine if not already running
+        // Check if the auto wave coroutine is not already running
         if (autoWaveCoroutine == null)
         {
+            // Start the coroutine to handle auto wave progression
             autoWaveCoroutine = StartCoroutine(AutoWaveRoutine());
-            UIHandler.Instance.startWaveButton.interactable = false;
+            // Disable the start button to prevent manual interference
+            UIHandler.Instance.startWaveButton.interactable = false; 
         }
     }
 
-    // Stop automatic wave spawning
+    // Stops the automatic wave spawning process
     private void StopAutoMode()
     {
-        // Stop the auto wave coroutine if running
+        // Check if the auto wave coroutine is currently running
         if (autoWaveCoroutine != null)
         {
+            // Stop the coroutine
             StopCoroutine(autoWaveCoroutine);
-            autoWaveCoroutine = null;
-            UIHandler.Instance.startWaveButton.interactable = true;
+
+            // Clear the coroutine reference 
+            autoWaveCoroutine = null; 
+
+            // Re-enable the start button
+            UIHandler.Instance.startWaveButton.interactable = true; 
         }
     }
 
-    // Coroutine to handle automatic wave progression
+    // Coroutine that handles the automatic wave progression
     private IEnumerator AutoWaveRoutine()
     {
-        while (autoModeEnabled)  // Keep running while auto mode is enabled
+        // Loop while auto mode is enabled
+        while (autoModeEnabled)  
         {
+            // Check if WaveHandler instance exists; if not, exit the coroutine
             if (!WaveHandler.Instance) yield break;
 
-            // Check if there are remaining waves
+            // Check if there are remaining waves to spawn
             if (WaveHandler.Instance.HasWavesRemaining())
             {
                 // Start the next wave
                 WaveHandler.Instance.StartNextWave(() =>
                 {
+                    // Log a message when the wave is completed
                     Debug.Log("Auto mode: Wave completed, waiting to start the next wave.");
                 });
 
-                // Wait for the interval before starting the next wave
-                yield return waitForAutoModeInterval;  // Use cached WaitForSeconds object
+                // Wait for the specified interval before starting the next wave
+                yield return waitForAutoModeInterval; 
             }
             else
             {
-                // No more waves remaining, stop auto mode
+                // Log that all waves are completed and disable auto mode
                 Debug.Log("All waves completed, disabling auto mode.");
-                StopAutoMode();
+                StopAutoMode(); // Stop the automatic wave spawning
 
                 // Update the AutoModeToggle to reflect the change
-                UIHandler.Instance.AutoModeToggle.isOn = false;
+                UIHandler.Instance.AutoModeToggle.isOn = false; 
                 UIHandler.Instance.AutoModeToggle.interactable = false;
 
-                yield break;  // Exit the coroutine
+                // Exit the coroutine as no more waves are available
+                yield break;
             }
         }
     }
