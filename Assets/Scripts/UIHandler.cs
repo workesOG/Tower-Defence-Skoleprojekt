@@ -38,8 +38,6 @@ public class UIHandler : MonoBehaviour
         foreach (var stpb in towerPlacementButtons)
         {
             Tower tower = Towers.GetTower(stpb.type);
-            bool buttonEnabled = CurrencyHandler.Instance.Money >= tower.price && !waveInProgress; // Disable during wave
-            stpb.button.interactable = buttonEnabled;
             stpb.button.transform.GetComponentInChildren<TMP_Text>().text = $"{stpb.type} ({tower.price})";
         }
     }
